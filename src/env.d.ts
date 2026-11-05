@@ -4,6 +4,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_CONTACT_EMAIL?: string;
   readonly PUBLIC_ALLOW_INDEXING?: string;
   readonly PUBLIC_SHOW_BOOKING_PREVIEW?: string;
+  /** VERCEL_ENV at build time: "production", "preview", "development", or "" outside Vercel. */
+  readonly DEPLOY_ENV: string;
 }
 
 interface ImportMeta {
