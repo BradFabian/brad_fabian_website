@@ -3,33 +3,96 @@ import { Image } from 'astro:assets';
 import logo from '../assets/brad-fabian-logo-transparent.png';
 ---
 
-<header class="site-header page-width">
-  <a class="brand" href="/" aria-label="Brad Fabian, home">
-    <Image
-      src={logo}
-      alt=""
-      widths={[160, 240, 320, 480]}
-      sizes="(max-width: 760px) 150px, 232px"
-      loading="eager"
-      class="brand-logo"
-    />
-  </a>
-  <nav aria-label="Primary">
-    <ul class="nav-list">
-      <li class="nav-secondary"><a href="#expertise">Expertise</a></li>
-      <li class="nav-secondary"><a href="#about">About</a></li>
-      <li><a class="button nav-cta" href="#book">Book a call <span class="arrow" aria-hidden="true">↗</span></a></li>
-    </ul>
-  </nav>
-</header>
+<div class="header-shell" data-header>
+  <header class="site-header page-width">
+    <a class="brand" href="#top" aria-label="Brad Fabian, back to top">
+      <Image
+        src={logo}
+        alt=""
+        widths={[160, 240, 320, 480]}
+        sizes="(max-width: 760px) 150px, 232px"
+        loading="eager"
+        class="brand-logo"
+      />
+    </a>
+    <nav aria-label="Primary">
+      <ul class="nav-list">
+        <li class="nav-secondary"><a href="#expertise" data-nav-link>Expertise</a></li>
+        <li class="nav-secondary"><a href="#about" data-nav-link>About</a></li>
+        <li><a class="button nav-cta" href="#book" data-nav-link>Book a call</a></li>
+      </ul>
+    </nav>
+  </header>
+</div>
+
+<script>
+  const shell = document.querySelector<HTMLElement>('[data-header]');
+
+  if (shell) {
+    // Condense the header once the page scrolls.
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:24px;pointer-events:none;';
+    document.body.prepend(sentinel);
+    new IntersectionObserver(([entry]) => shell.classList.toggle('is-condensed', !entry.isIntersecting)).observe(sentinel);
+
+    // Mark the nav link for the section currently in view.
+    const links = [...shell.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
+    const sections = links
+      .map((link) => document.querySelector<HTMLElement>(link.hash))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    const visible = new Set<string>();
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        const current = sections.find((section) => visible.has(section.id))?.id;
+        for (const link of links) {
+          if (link.hash === `#${current}`) link.setAttribute('aria-current', 'true');
+          else link.removeAttribute('aria-current');
+        }
+      },
+      { rootMargin: '-35% 0px -55% 0px' },
+    );
+    sections.forEach((section) => spy.observe(section));
+  }
+</script>
 
 <style>
+  .header-shell {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 0.5s var(--ease-out),
+      border-color 0.5s var(--ease-out),
+      box-shadow 0.5s var(--ease-out);
+  }
+
+  .header-shell.is-condensed {
+    border-bottom-color: rgb(204 213 206 / 0.7);
+    background: rgb(246 243 236 / 0.86);
+    box-shadow: 0 12px 30px -24px rgb(7 62 69 / 0.35);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+  }
+
   .site-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
-    padding: 28px var(--pad-hero) 0;
+    padding: 28px var(--pad-hero) 14px;
+    transition: padding 0.6s var(--ease-out);
+  }
+
+  .is-condensed .site-header {
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
   .brand {
@@ -42,6 +105,11 @@ import logo from '../assets/brad-fabian-logo-transparent.png';
     display: block;
     width: 232px;
     height: auto;
+    transition: width 0.6s var(--ease-out);
+  }
+
+  .is-condensed .brand-logo {
+    width: 150px;
   }
 
   .nav-list {
@@ -54,15 +122,31 @@ import logo from '../assets/brad-fabian-logo-transparent.png';
   }
 
   .nav-list a:not(.button) {
+    position: relative;
+    padding-block: 6px;
     color: var(--color-teal-deep);
     font-size: 13px;
     text-decoration: none;
-    text-underline-offset: 5px;
   }
 
-  .nav-list a:not(.button):hover {
-    text-decoration: underline;
-    text-decoration-color: var(--color-coral);
+  /* Underline that draws in from the left on hover and for the current section. */
+  .nav-list a:not(.button)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: var(--color-coral);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .nav-list a:not(.button):hover::after,
+  .nav-list a[aria-current]::after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 
   .nav-cta {
@@ -70,13 +154,18 @@ import logo from '../assets/brad-fabian-logo-transparent.png';
     padding-inline: 18px;
   }
 
+
   @media (max-width: 760px) {
     .site-header {
-      padding-top: 20px;
+      padding-top: 18px;
     }
 
     .brand-logo {
       width: 150px;
+    }
+
+    .is-condensed .brand-logo {
+      width: 118px;
     }
 
     .nav-list {

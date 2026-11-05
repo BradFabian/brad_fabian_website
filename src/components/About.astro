@@ -5,7 +5,7 @@ import portrait from '../assets/brad-fabian-portrait.jpg';
 
 <section id="about" class="about page-width" aria-labelledby="about-heading">
   <div class="about-inner">
-    <figure class="portrait">
+    <figure class="portrait" data-reveal>
       <div class="portrait-frame">
         <span class="portrait-outline" aria-hidden="true"></span>
         <Image
@@ -24,7 +24,7 @@ import portrait from '../assets/brad-fabian-portrait.jpg';
       </figcaption>
     </figure>
 
-    <div class="about-copy">
+    <div class="about-copy" data-reveal style="--reveal-delay: 150ms">
       <p class="eyebrow">02 / Your partner</p>
       <h2 id="about-heading" class="section-heading about-heading">
         Strategy is personal.<br />
@@ -39,7 +39,7 @@ import portrait from '../assets/brad-fabian-portrait.jpg';
         I’m comfortable talking business with leadership and working through the details with engineers. When we work
         together, you work directly with me.
       </p>
-      <a class="text-link" href="#book">Let’s get to know each other <span class="arrow" aria-hidden="true">↗</span></a>
+      <a class="text-link" href="#book">Let’s get to know each other</a>
       <p class="about-tagline">Independent commerce &amp; technology advisor · Miami, FL</p>
     </div>
   </div>
@@ -135,6 +135,32 @@ import portrait from '../assets/brad-fabian-portrait.jpg';
 
   .text-link:hover {
     color: var(--color-coral);
+  }
+
+  /* Coral sweeps through the text from left to right: the gradient's coral half is clipped
+     to the letterforms and slides into place on hover. */
+  @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+    .text-link {
+      background-image: linear-gradient(to right, var(--color-coral) 50%, var(--color-ivory) 50%);
+      background-size: 200% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      transition: background-position 0.9s var(--ease-out);
+    }
+
+    .text-link:hover,
+    .text-link:focus-visible {
+      color: transparent;
+      background-position: 0 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-link {
+      transition-duration: 0.01ms;
+    }
   }
 
   .text-link:focus-visible {

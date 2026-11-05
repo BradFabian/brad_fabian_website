@@ -12,7 +12,7 @@ const mailto = site.contactEmail
 
 <section id="book" class="booking" aria-labelledby="book-heading">
   <div class="section">
-    <div class="intro">
+    <div class="intro" data-reveal>
       <div>
         <p class="eyebrow">04 / Start a conversation</p>
         <h2 id="book-heading" class="section-heading booking-heading">
@@ -23,7 +23,7 @@ const mailto = site.contactEmail
       <p class="lede">Let’s talk about your business, what’s getting in the way, and where I might be able to help.</p>
     </div>
 
-    <div class:list={['booking-card', `booking-card--${mode}`]}>
+    <div class:list={['booking-card', `booking-card--${mode}`]} data-reveal style="--reveal-delay: 120ms">
       <div class="summary">
         {mode === 'preview' && <p class="preview-badge">Booking preview</p>}
         <Image
@@ -39,8 +39,8 @@ const mailto = site.contactEmail
         <p class="host">Brad Fabian</p>
         <h3 class="summary-title">Let’s talk commerce.</h3>
         <ul class="details">
-          <li><span class="detail-icon" aria-hidden="true">◷</span> 30 minutes</li>
-          <li><span class="detail-icon" aria-hidden="true">↗</span> Video call</li>
+          <li>30 minutes</li>
+          <li>Video call</li>
         </ul>
         <p class="summary-text">An introductory conversation about your goals, challenges, and next move.</p>
         {
@@ -69,7 +69,7 @@ const mailto = site.contactEmail
                 <>
                   <p>Send a short note with a few times that work for you, and I’ll confirm by email.</p>
                   <a class="button" href={mailto}>
-                    Email {site.contactEmail} <span class="arrow" aria-hidden="true">↗</span>
+                    Email {site.contactEmail}
                   </a>
                 </>
               ) : (
@@ -232,11 +232,6 @@ const mailto = site.contactEmail
     font-size: 13px;
   }
 
-  .detail-icon {
-    display: inline-block;
-    width: 18px;
-    color: var(--color-teal-muted);
-  }
 
   .summary-text {
     max-width: 22rem;

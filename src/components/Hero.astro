@@ -5,32 +5,31 @@ import mural from '../assets/wynwood-bf.webp';
 
 <section class="hero page-width" aria-labelledby="hero-heading">
   <div class="hero-copy">
-    <p class="eyebrow hero-eyebrow"><span class="dot" aria-hidden="true"></span>Commerce strategy &amp; technology</p>
-    <h1 id="hero-heading" class="hero-heading">
+    <p class="eyebrow hero-eyebrow" data-reveal><span class="dot" aria-hidden="true"></span>Commerce strategy &amp; technology</p>
+    <h1 id="hero-heading" class="hero-heading" data-reveal style="--reveal-delay: 80ms">
       Big picture.<br />
       Real progress.<br />
       <em>Personally.</em>
     </h1>
-    <p class="hero-intro">
+    <p class="hero-intro" data-reveal style="--reveal-delay: 200ms">
       I help retailers build faster, more profitable e-commerce sites. I bring commerce strategy and hands-on technical
       expertise to Shopify and BigCommerce, from deciding what to fix to getting it done.
     </p>
-    <a class="button hero-cta" href="#book">Book an introductory call <span class="arrow" aria-hidden="true">↗</span></a>
+    <div data-reveal style="--reveal-delay: 300ms">
+      <a class="button hero-cta" href="#book">Book an introductory call</a>
+    </div>
   </div>
 
-  <figure class="hero-art">
-    <div class="art-frame">
-      <span class="art-backing" aria-hidden="true"></span>
-      <div class="art-arch">
-        <Image
-          src={mural}
-          alt=""
-          widths={[400, 560, 760, 1000]}
-          sizes="(max-width: 760px) 88vw, 500px"
-          priority
-          class="art-image"
-        />
-      </div>
+  <figure class="hero-art" data-reveal style="--reveal-delay: 150ms">
+    <div class="arch">
+      <Image
+        src={mural}
+        alt=""
+        widths={[400, 560, 760, 1000]}
+        sizes="(max-width: 760px) 88vw, 500px"
+        priority
+        class="art-image"
+      />
     </div>
     <figcaption class="art-caption">
       <span>Strategy with perspective.</span>
@@ -45,7 +44,7 @@ import mural from '../assets/wynwood-bf.webp';
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     align-items: center;
     gap: clamp(32px, 5vw, 80px);
-    padding: 70px var(--pad-hero) var(--section-y);
+    padding: 56px var(--pad-hero) var(--section-y);
   }
 
   .hero-eyebrow {
@@ -85,35 +84,25 @@ import mural from '../assets/wynwood-bf.webp';
     font-size: clamp(15px, 1.15vw, 17px);
   }
 
-  /* Arched mural with offset coral backing */
+  /* ---------- Arched mural ---------- */
   .hero-art {
     justify-self: center;
     width: min(100%, 500px);
     margin: 0;
   }
 
-  .art-frame {
-    position: relative;
+  .arch {
     height: 620px;
-  }
-
-  .art-backing,
-  .art-arch {
-    position: absolute;
-    inset: 0;
-    border-radius: 48% 48% 0 0 / 38% 38% 0 0;
-  }
-
-  .art-backing {
-    background: var(--color-coral);
-    transform: translate(22px, -16px);
-    opacity: 0.92;
-  }
-
-  .art-arch {
     overflow: hidden;
-    transform: rotate(2deg);
-    box-shadow: 0 18px 40px -24px rgb(7 62 69 / 0.45);
+    border-radius: 50% 50% 0 0 / 40% 40% 0 0;
+    background: var(--color-sage);
+    /* Layered shadow: soft, natural depth. */
+    box-shadow:
+      0 1px 1px hsl(0deg 0% 0% / 0.075),
+      0 2px 2px hsl(0deg 0% 0% / 0.075),
+      0 4px 4px hsl(0deg 0% 0% / 0.075),
+      0 8px 8px hsl(0deg 0% 0% / 0.075),
+      0 16px 16px hsl(0deg 0% 0% / 0.075);
   }
 
   .art-image {
@@ -121,7 +110,7 @@ import mural from '../assets/wynwood-bf.webp';
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 60% 35%;
+    object-position: 58% 40%;
   }
 
   .art-caption {
@@ -134,11 +123,11 @@ import mural from '../assets/wynwood-bf.webp';
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    transform: rotate(2deg);
+    white-space: nowrap;
   }
 
   @media (max-width: 1024px) {
-    .art-frame {
+    .arch {
       height: 540px;
     }
   }
@@ -147,7 +136,7 @@ import mural from '../assets/wynwood-bf.webp';
     .hero {
       grid-template-columns: 1fr;
       gap: 56px;
-      padding-top: 48px;
+      padding-top: 40px;
     }
 
     .hero-heading {
@@ -159,12 +148,12 @@ import mural from '../assets/wynwood-bf.webp';
       width: min(100%, 420px);
     }
 
-    .art-frame {
+    .arch {
       height: 510px;
     }
 
-    .art-backing {
-      transform: translate(14px, -12px);
+    .art-caption {
+      letter-spacing: 1.5px;
     }
   }
 </style>

@@ -17,7 +17,7 @@ const steps = [
 
 <section class="approach page-width" aria-labelledby="approach-heading">
   <div class="approach-inner">
-    <div>
+    <div data-reveal>
       <p class="eyebrow">03 / The approach</p>
       <h2 id="approach-heading" class="section-heading approach-heading">
         Understand it.<br />
@@ -29,7 +29,7 @@ const steps = [
     <ol class="steps">
       {
         steps.map((step, index) => (
-          <li class="step">
+          <li class="step" data-reveal style={`--reveal-delay: ${index * 120}ms`}>
             <span class="step-number" aria-hidden="true">
               {String(index + 1).padStart(2, '0')}
             </span>

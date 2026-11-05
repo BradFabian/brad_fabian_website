@@ -4,7 +4,7 @@ import { services } from '../data/services';
 
 <section id="expertise" class="expertise" aria-labelledby="expertise-heading">
   <div class="section">
-    <div class="intro">
+    <div class="intro" data-reveal>
       <div>
         <p class="eyebrow">01 / How I help</p>
         <h2 id="expertise-heading" class="section-heading">
@@ -18,13 +18,12 @@ import { services } from '../data/services';
     <ul class="service-grid">
       {
         services.map((service, index) => (
-          <li class="service">
+          <li class="service" data-reveal style={`--reveal-delay: ${(index % 2) * 120}ms`}>
             <div class="service-meta">
               <span class="service-number">
                 {String(index + 1).padStart(2, '0')}
                 {service.category !== service.heading && <span class="service-category"> / {service.category}</span>}
               </span>
-              <span class="service-arrow" aria-hidden="true">↗</span>
             </div>
             <h3 class="service-heading">{service.heading}</h3>
             <p class="service-summary">{service.summary}</p>
@@ -97,11 +96,6 @@ import { services } from '../data/services';
     letter-spacing: 1.5px;
   }
 
-  .service-arrow {
-    color: var(--color-coral);
-    font-size: 20px;
-    line-height: 1;
-  }
 
   .service-heading {
     max-width: 26ch;
