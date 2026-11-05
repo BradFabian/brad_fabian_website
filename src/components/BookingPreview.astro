@@ -1,0 +1,281 @@
+---
+/**
+ * Local-review-only calendar mock. It never reserves a slot or sends anything,
+ * and it is not rendered in production builds unless PUBLIC_SHOW_BOOKING_PREVIEW=true.
+ */
+const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+---
+
+<div class="preview" data-booking-preview>
+  <h3 class="preview-title">Select a date &amp; time</h3>
+
+  <div class="month-bar">
+    <button type="button" class="nav-button" data-prev aria-label="Previous month">‹</button>
+    <p class="month-label" data-month aria-live="polite"></p>
+    <button type="button" class="nav-button" data-next aria-label="Next month">›</button>
+  </div>
+
+  <div class="weekdays" aria-hidden="true">
+    {weekdays.map((day) => <span>{day}</span>)}
+  </div>
+  <div class="days" data-days role="group" aria-label="Sample dates"></div>
+
+  <div class="times" data-times hidden>
+    <p class="times-label" data-times-label></p>
+    <div class="time-list" data-time-list role="group" aria-label="Sample times"></div>
+  </div>
+
+  <p class="timezone">Time zone: Eastern Time — New York (sample)</p>
+  <p class="status" data-status role="status" aria-live="polite"></p>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-booking-preview]');
+
+  if (root) {
+    const monthLabel = root.querySelector<HTMLElement>('[data-month]')!;
+    const daysEl = root.querySelector<HTMLElement>('[data-days]')!;
+    const timesEl = root.querySelector<HTMLElement>('[data-times]')!;
+    const timesLabel = root.querySelector<HTMLElement>('[data-times-label]')!;
+    const timeList = root.querySelector<HTMLElement>('[data-time-list]')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const prev = root.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-next]')!;
+
+    const sampleTimes = ['10:00 AM', '11:30 AM', '1:00 PM', '2:30 PM', '4:00 PM'];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const firstMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastMonth = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+    let viewMonth = new Date(firstMonth);
+    let selectedDate: Date | null = null;
+
+    const longDate = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const monthFormat = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+
+    const isAvailable = (date: Date) => {
+      const day = date.getDay();
+      return date > today && day !== 0 && day !== 6;
+    };
+
+    const renderTimes = () => {
+      timeList.replaceChildren();
+      status.textContent = '';
+      if (!selectedDate) {
+        timesEl.hidden = true;
+        return;
+      }
+      timesEl.hidden = false;
+      timesLabel.textContent = longDate.format(selectedDate);
+      for (const time of sampleTimes) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'time';
+        button.textContent = time;
+        button.setAttribute('aria-pressed', 'false');
+        button.addEventListener('click', () => {
+          timeList.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+          button.setAttribute('aria-pressed', 'true');
+          status.textContent = `Preview only: ${time} is a sample time. Nothing has been reserved and no meeting has been booked.`;
+        });
+        timeList.append(button);
+      }
+    };
+
+    const render = () => {
+      monthLabel.textContent = monthFormat.format(viewMonth);
+      prev.disabled = viewMonth <= firstMonth;
+      next.disabled = viewMonth >= lastMonth;
+      daysEl.replaceChildren();
+
+      const year = viewMonth.getFullYear();
+      const month = viewMonth.getMonth();
+      const offset = (new Date(year, month, 1).getDay() + 6) % 7; // Monday-first grid
+      const count = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < offset; i++) {
+        daysEl.append(document.createElement('span'));
+      }
+
+      for (let day = 1; day <= count; day++) {
+        const date = new Date(year, month, day);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'day';
+        button.textContent = String(day);
+        button.setAttribute('aria-label', longDate.format(date));
+        const selected = selectedDate?.getTime() === date.getTime();
+        button.setAttribute('aria-pressed', String(selected));
+        if (!isAvailable(date)) {
+          button.disabled = true;
+        } else {
+          button.classList.add('is-available');
+          button.addEventListener('click', () => {
+            selectedDate = date;
+            render();
+            renderTimes();
+            daysEl.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
+          });
+        }
+        daysEl.append(button);
+      }
+    };
+
+    prev.addEventListener('click', () => {
+      viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1);
+      render();
+    });
+    next.addEventListener('click', () => {
+      viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1);
+      render();
+    });
+
+    render();
+  }
+</script>
+
+<style>
+  .preview-title {
+    margin: 0 0 22px;
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .month-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .month-label {
+    margin: 0;
+    color: var(--color-teal-deep);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .nav-button,
+  .preview :global(.day),
+  .preview :global(.time) {
+    font-family: var(--font-sans);
+    cursor: pointer;
+  }
+
+  .nav-button {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-sage);
+    color: var(--color-teal-deep);
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .nav-button:disabled {
+    cursor: default;
+    opacity: 0.35;
+  }
+
+  .weekdays,
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    text-align: center;
+  }
+
+  .weekdays {
+    margin-bottom: 6px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .days {
+    row-gap: 4px;
+  }
+
+  .preview :global(.day) {
+    justify-self: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-slate);
+    font-size: 13px;
+  }
+
+  .preview :global(.day:disabled) {
+    color: #a7b3b4;
+    cursor: default;
+  }
+
+  .preview :global(.day.is-available) {
+    background: var(--color-sage);
+    color: var(--color-teal-deep);
+    font-weight: 700;
+  }
+
+  .preview :global(.day[aria-pressed='true']),
+  .preview :global(.time[aria-pressed='true']) {
+    background: var(--color-teal-deep);
+    color: var(--color-ivory);
+  }
+
+  .times {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .times-label {
+    margin: 0 0 10px;
+    color: var(--color-teal-deep);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .time-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+  }
+
+  .preview :global(.time) {
+    min-height: 40px;
+    border: 1px solid var(--color-teal-muted);
+    border-radius: var(--radius-button);
+    background: transparent;
+    color: var(--color-teal-deep);
+    font-size: 13px;
+  }
+
+  .timezone {
+    margin: 18px 0 0;
+    font-size: 11px;
+  }
+
+  .status {
+    margin: 10px 0 0;
+    color: var(--color-coral-ink);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .status:empty {
+    display: none;
+  }
+
+  @media (max-width: 420px) {
+    .preview :global(.day) {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>

@@ -1,0 +1,181 @@
+---
+import { services } from '../data/services';
+---
+
+<section id="expertise" class="expertise" aria-labelledby="expertise-heading">
+  <div class="section">
+    <div class="intro">
+      <div>
+        <p class="eyebrow">01 / How I help</p>
+        <h2 id="expertise-heading" class="section-heading">
+          Clarity at the top.<br />
+          Momentum on the ground.
+        </h2>
+      </div>
+      <p class="lede">An experienced partner who understands the business, gets into the details, and helps move the work forward.</p>
+    </div>
+
+    <ul class="service-grid">
+      {
+        services.map((service, index) => (
+          <li class="service">
+            <div class="service-meta">
+              <span class="service-number">
+                {String(index + 1).padStart(2, '0')}
+                {service.category !== service.heading && <span class="service-category"> / {service.category}</span>}
+              </span>
+              <span class="service-arrow" aria-hidden="true">↗</span>
+            </div>
+            <h3 class="service-heading">{service.heading}</h3>
+            <p class="service-summary">{service.summary}</p>
+            {service.points && (
+              <ul class="service-points">
+                {service.points.map((point) => (
+                  <li>
+                    <strong>{point.label}.</strong> {point.text}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {service.note && <p class="service-note">{service.note}</p>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .expertise {
+    border-top: 1px solid var(--color-teal-deep);
+  }
+
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 40px 64px;
+    margin-bottom: 52px;
+  }
+
+  .intro .lede {
+    justify-self: end;
+    max-width: 22rem;
+    font-size: 15px;
+  }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 48px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .service {
+    padding: 26px 0 52px;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .service-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 18px;
+  }
+
+  .service-number {
+    color: var(--color-slate);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .service-category {
+    letter-spacing: 1.5px;
+  }
+
+  .service-arrow {
+    color: var(--color-coral);
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .service-heading {
+    max-width: 26ch;
+    margin: 0 0 14px;
+    font-family: var(--font-sans);
+    font-size: clamp(21px, 1.8vw, 25px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .service-summary,
+  .service-points,
+  .service-note {
+    max-width: 36rem;
+    font-size: 14px;
+  }
+
+  .service-summary {
+    margin: 0;
+  }
+
+  .service-points {
+    display: grid;
+    gap: 10px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .service-points li {
+    position: relative;
+    padding-left: 18px;
+  }
+
+  .service-points li::before {
+    content: '';
+    position: absolute;
+    top: 0.72em;
+    left: 0;
+    width: 8px;
+    height: 1px;
+    background: var(--color-coral);
+  }
+
+  .service-points strong {
+    color: var(--color-teal-deep);
+    font-weight: 700;
+  }
+
+  .service-note {
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px dashed var(--color-divider);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  @media (max-width: 760px) {
+    .intro {
+      grid-template-columns: 1fr;
+      margin-bottom: 36px;
+    }
+
+    .intro .lede {
+      justify-self: start;
+    }
+
+    .service-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .service {
+      padding-bottom: 40px;
+    }
+  }
+</style>

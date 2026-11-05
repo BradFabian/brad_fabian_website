@@ -1,0 +1,31 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24.11.1"
+  # Public launch inputs (these appear on the page, so they are not secrets).
+  PUBLIC_BOOKING_URL = "https://calendly.com/brad-bradfabian/30min"
+  PUBLIC_CONTACT_EMAIL = "brad@bradfabian.com"
+  # Search indexing stays off (noindex + disallow-all robots.txt) until launch is approved.
+  PUBLIC_ALLOW_INDEXING = "false"
+
+# Production deploys only. Deploy previews and branch deploys keep the defaults above.
+[context.production.environment]
+  PUBLIC_SITE_URL = "https://bradfabian.com"
+  # At launch, once bradfabian.com points to Netlify and the site is approved, change this to "true".
+  PUBLIC_ALLOW_INDEXING = "false"
+
+# Fingerprinted Astro assets never change, so they can be cached for a year.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

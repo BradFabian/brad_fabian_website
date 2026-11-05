@@ -1,0 +1,170 @@
+---
+import { Image } from 'astro:assets';
+import mural from '../assets/wynwood-bf.webp';
+---
+
+<section class="hero page-width" aria-labelledby="hero-heading">
+  <div class="hero-copy">
+    <p class="eyebrow hero-eyebrow"><span class="dot" aria-hidden="true"></span>Commerce strategy &amp; technology</p>
+    <h1 id="hero-heading" class="hero-heading">
+      Big picture.<br />
+      Real progress.<br />
+      <em>Personally.</em>
+    </h1>
+    <p class="hero-intro">
+      I help retailers build faster, more profitable e-commerce sites. I bring commerce strategy and hands-on technical
+      expertise to Shopify and BigCommerce, from deciding what to fix to getting it done.
+    </p>
+    <a class="button hero-cta" href="#book">Book an introductory call <span class="arrow" aria-hidden="true">↗</span></a>
+  </div>
+
+  <figure class="hero-art">
+    <div class="art-frame">
+      <span class="art-backing" aria-hidden="true"></span>
+      <div class="art-arch">
+        <Image
+          src={mural}
+          alt=""
+          widths={[400, 560, 760, 1000]}
+          sizes="(max-width: 760px) 88vw, 500px"
+          priority
+          class="art-image"
+        />
+      </div>
+    </div>
+    <figcaption class="art-caption">
+      <span>Strategy with perspective.</span>
+      <span>Miami, FL</span>
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 80px);
+    padding: 70px var(--pad-hero) var(--section-y);
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-coral);
+  }
+
+  .hero-heading {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: clamp(65px, 7vw, 104px);
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+  }
+
+  .hero-heading em {
+    color: var(--color-teal-muted);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.035em;
+  }
+
+  .hero-intro {
+    max-width: 30rem;
+    margin: 34px 0 38px;
+    font-size: clamp(15px, 1.15vw, 17px);
+  }
+
+  /* Arched mural with offset coral backing */
+  .hero-art {
+    justify-self: center;
+    width: min(100%, 500px);
+    margin: 0;
+  }
+
+  .art-frame {
+    position: relative;
+    height: 620px;
+  }
+
+  .art-backing,
+  .art-arch {
+    position: absolute;
+    inset: 0;
+    border-radius: 48% 48% 0 0 / 38% 38% 0 0;
+  }
+
+  .art-backing {
+    background: var(--color-coral);
+    transform: translate(22px, -16px);
+    opacity: 0.92;
+  }
+
+  .art-arch {
+    overflow: hidden;
+    transform: rotate(2deg);
+    box-shadow: 0 18px 40px -24px rgb(7 62 69 / 0.45);
+  }
+
+  .art-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 35%;
+  }
+
+  .art-caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 22px;
+    color: var(--color-teal-deep);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transform: rotate(2deg);
+  }
+
+  @media (max-width: 1024px) {
+    .art-frame {
+      height: 540px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 56px;
+      padding-top: 48px;
+    }
+
+    .hero-heading {
+      /* Brief: clamp(56px, 12vw, 80px). Floor lowered so "Real progress." fits a 375px screen without overflow. */
+      font-size: clamp(44px, 12vw, 80px);
+    }
+
+    .hero-art {
+      width: min(100%, 420px);
+    }
+
+    .art-frame {
+      height: 510px;
+    }
+
+    .art-backing {
+      transform: translate(14px, -12px);
+    }
+  }
+</style>

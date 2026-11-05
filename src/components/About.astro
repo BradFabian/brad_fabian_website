@@ -1,0 +1,185 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/brad-fabian-portrait.jpg';
+---
+
+<section id="about" class="about page-width" aria-labelledby="about-heading">
+  <div class="about-inner">
+    <figure class="portrait">
+      <div class="portrait-frame">
+        <span class="portrait-outline" aria-hidden="true"></span>
+        <Image
+          src={portrait}
+          alt="Brad Fabian, smiling, wearing dark-rimmed glasses, a navy blazer, and a light blue shirt"
+          widths={[320, 480, 640, 780]}
+          sizes="(max-width: 760px) 80vw, 390px"
+          loading="lazy"
+          decoding="async"
+          class="portrait-image"
+        />
+      </div>
+      <figcaption class="portrait-caption">
+        <span>Brad Fabian</span>
+        <span>Your partner, from day one.</span>
+      </figcaption>
+    </figure>
+
+    <div class="about-copy">
+      <p class="eyebrow">02 / Your partner</p>
+      <h2 id="about-heading" class="section-heading about-heading">
+        Strategy is personal.<br />
+        So is the work.
+      </h2>
+      <p>
+        My career has always been at the intersection of technology and commerce. I started in web development and went
+        on to lead e-commerce. That experience helps me see where a site is losing sales or costing more than it should,
+        decide what will make the biggest difference, and lead the work to fix it.
+      </p>
+      <p>
+        I’m comfortable talking business with leadership and working through the details with engineers. When we work
+        together, you work directly with me.
+      </p>
+      <a class="text-link" href="#book">Let’s get to know each other <span class="arrow" aria-hidden="true">↗</span></a>
+      <p class="about-tagline">Independent commerce &amp; technology advisor · Miami, FL</p>
+    </div>
+  </div>
+  <span class="sun" aria-hidden="true"></span>
+</section>
+
+<style>
+  .about {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-teal-deep);
+    color: rgb(246 243 236 / 0.82);
+  }
+
+  .about-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 64px;
+    padding: var(--section-y) var(--pad-content) calc(var(--section-y) + 20px);
+  }
+
+  /* Portrait with a fine, slightly rotated coral frame */
+  .portrait {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 390px);
+    margin: 0;
+  }
+
+  .portrait-frame {
+    position: relative;
+  }
+
+  .portrait-outline {
+    position: absolute;
+    inset: -14px 14px 14px -14px;
+    border: 1px solid var(--color-coral);
+    border-radius: 6px;
+    transform: rotate(-2.5deg);
+  }
+
+  .portrait-image {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+
+  .portrait-caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 18px;
+    color: rgb(246 243 236 / 0.75);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .about-copy {
+    max-width: 36rem;
+    font-size: 15px;
+  }
+
+  .about-copy .eyebrow {
+    color: #9cc4c0;
+  }
+
+  .about-heading {
+    margin-bottom: 26px;
+    color: var(--color-ivory);
+    font-size: clamp(38px, 4vw, 57px);
+  }
+
+  .about-copy p:not(.eyebrow, .about-tagline) {
+    margin: 0 0 18px;
+  }
+
+  .text-link {
+    display: inline-flex;
+    gap: 1.75rem;
+    margin-top: 6px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--color-coral);
+    color: var(--color-ivory);
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .text-link:hover {
+    color: var(--color-coral);
+  }
+
+  .text-link:focus-visible {
+    outline-color: var(--color-ivory);
+  }
+
+  .about-tagline {
+    margin: 30px 0 0;
+    padding-top: 22px;
+    border-top: 1px solid rgb(246 243 236 / 0.18);
+    color: #9cc4c0;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .sun {
+    position: absolute;
+    bottom: -150px;
+    left: calc(var(--pad-content) + 70px);
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: var(--color-coral);
+    opacity: 0.95;
+  }
+
+  @media (max-width: 760px) {
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: 56px;
+      padding-bottom: calc(var(--section-y) + 40px);
+    }
+
+    .portrait {
+      justify-self: center;
+      width: min(calc(100% - 20px), 390px);
+    }
+
+    .sun {
+      left: auto;
+      right: 8%;
+      width: 180px;
+      height: 180px;
+      bottom: -110px;
+    }
+  }
+</style>

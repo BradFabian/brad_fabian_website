@@ -1,0 +1,35 @@
+{
+  "name": "bradfabianwebsite",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/BradFabian/brad_fabian_website#readme",
+  "bugs": {
+    "url": "https://github.com/BradFabian/brad_fabian_website/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BradFabian/brad_fabian_website.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^7.4.7",
+    "tailwindcss": "^4.3.4"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/node": "^24.19.2",
+    "typescript": "^6.0.3"
+  }
+}

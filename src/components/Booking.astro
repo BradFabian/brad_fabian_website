@@ -1,0 +1,343 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/brad-fabian-portrait.jpg';
+import { site } from '../config';
+import BookingPreview from './BookingPreview.astro';
+
+const mode = site.bookingUrl ? 'live' : site.showBookingPreview ? 'preview' : 'fallback';
+const mailto = site.contactEmail
+  ? `mailto:${site.contactEmail}?subject=${encodeURIComponent('Introductory call')}`
+  : '';
+---
+
+<section id="book" class="booking" aria-labelledby="book-heading">
+  <div class="section">
+    <div class="intro">
+      <div>
+        <p class="eyebrow">04 / Start a conversation</p>
+        <h2 id="book-heading" class="section-heading booking-heading">
+          A little time.<br />
+          A clearer next step.
+        </h2>
+      </div>
+      <p class="lede">Let’s talk about your business, what’s getting in the way, and where I might be able to help.</p>
+    </div>
+
+    <div class:list={['booking-card', `booking-card--${mode}`]}>
+      <div class="summary">
+        {mode === 'preview' && <p class="preview-badge">Booking preview</p>}
+        <Image
+          src={portrait}
+          alt=""
+          width={64}
+          height={64}
+          densities={[1, 2]}
+          loading="lazy"
+          decoding="async"
+          class="avatar"
+        />
+        <p class="host">Brad Fabian</p>
+        <h3 class="summary-title">Let’s talk commerce.</h3>
+        <ul class="details">
+          <li><span class="detail-icon" aria-hidden="true">◷</span> 30 minutes</li>
+          <li><span class="detail-icon" aria-hidden="true">↗</span> Video call</li>
+        </ul>
+        <p class="summary-text">An introductory conversation about your goals, challenges, and next move.</p>
+        {
+          mode === 'preview' && (
+            <p class="summary-note">Sample availability for design review. No appointment will be booked.</p>
+          )
+        }
+      </div>
+
+      <div class="scheduler">
+        {
+          mode === 'live' && (
+            <div class="embed" data-booking-embed data-src={site.bookingUrl}>
+              <p class="embed-loading" data-embed-status>
+                The scheduler loads when you reach this section.
+              </p>
+            </div>
+          )
+        }
+        {mode === 'preview' && <BookingPreview />}
+        {
+          mode === 'fallback' && (
+            <div class="fallback">
+              <h3 class="fallback-title">Request a time</h3>
+              {mailto ? (
+                <>
+                  <p>Send a short note with a few times that work for you, and I’ll confirm by email.</p>
+                  <a class="button" href={mailto}>
+                    Email {site.contactEmail} <span class="arrow" aria-hidden="true">↗</span>
+                  </a>
+                </>
+              ) : (
+                <p>Online scheduling is being set up. Please check back soon.</p>
+              )}
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      mode === 'live' && (
+        <p class="direct-link">
+          Calendar not loading?{' '}
+          <a href={site.bookingUrl} target="_blank" rel="noopener">
+            Open the booking page in a new tab<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        </p>
+      )
+    }
+    {mode === 'preview' && <p class="direct-link">Scheduling preview · Your Calendly or Cal.com link will replace this calendar.</p>}
+  </div>
+</section>
+
+<script>
+  // Defer the third-party scheduler until the booking section is close to the viewport.
+  const container = document.querySelector<HTMLElement>('[data-booking-embed]');
+
+  if (container) {
+    const src = container.dataset.src;
+    const status = container.querySelector<HTMLElement>('[data-embed-status]');
+
+    // Calendly inline-embed options: hide its cookie banner and match the site palette.
+    const embedSrc = (url: string) => {
+      const parsed = new URL(url);
+      if (parsed.hostname.endsWith('calendly.com')) {
+        parsed.searchParams.set('embed_domain', window.location.hostname);
+        parsed.searchParams.set('embed_type', 'Inline');
+        parsed.searchParams.set('hide_gdpr_banner', '1');
+        // The summary panel beside the embed already shows the event details.
+        parsed.searchParams.set('hide_event_type_details', '1');
+        parsed.searchParams.set('background_color', 'fdfcf8');
+        parsed.searchParams.set('text_color', '073e45');
+        parsed.searchParams.set('primary_color', '073e45');
+      }
+      return parsed.href;
+    };
+
+    const load = () => {
+      if (!src || container.querySelector('iframe')) return;
+      const frame = document.createElement('iframe');
+      frame.src = embedSrc(src);
+      frame.title = 'Book a 30-minute introductory call with Brad Fabian';
+      frame.loading = 'lazy';
+      frame.addEventListener('load', () => status?.remove(), { once: true });
+      if (status) status.textContent = 'Loading the scheduler…';
+      container.append(frame);
+    };
+
+    // Calendly reports its content height; grow the frame so the time list isn't clipped.
+    window.addEventListener('message', (event) => {
+      if (!/^https:\/\/([a-z0-9-]+\.)*calendly\.com$/.test(event.origin)) return;
+      const data = event.data as { event?: string; payload?: { height?: string } } | null;
+      const height = parseInt(data?.payload?.height ?? '', 10);
+      if (data?.event === 'calendly.page_height' && height > 0) {
+        container.style.minHeight = `${Math.max(height, 620)}px`;
+      }
+    });
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            observer.disconnect();
+            load();
+          }
+        },
+        { rootMargin: '400px 0px' },
+      );
+      observer.observe(container);
+    } else {
+      load();
+    }
+  }
+</script>
+
+<style>
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 32px 64px;
+    margin-bottom: 44px;
+  }
+
+  .intro .lede {
+    max-width: 24rem;
+    justify-self: center;
+  }
+
+  .booking-heading {
+    font-size: clamp(43px, 4vw, 58px);
+  }
+
+  .booking-card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.2fr);
+    overflow: hidden;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-card);
+    background: var(--color-paper);
+    box-shadow: 0 24px 50px -36px rgb(7 62 69 / 0.4);
+  }
+
+  .summary {
+    padding: 30px 30px 36px;
+    border-right: 1px solid var(--color-divider);
+  }
+
+  .preview-badge {
+    display: inline-block;
+    margin: 0 0 22px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #fbe3dc;
+    color: var(--color-coral-ink);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .avatar {
+    display: block;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .host {
+    margin: 14px 0 4px;
+    font-size: 13px;
+  }
+
+  .summary-title {
+    margin: 0 0 22px;
+    font-family: var(--font-serif);
+    font-size: clamp(24px, 2vw, 28px);
+    letter-spacing: -0.03em;
+  }
+
+  .details {
+    display: grid;
+    gap: 4px;
+    margin: 0 0 22px;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+  }
+
+  .detail-icon {
+    display: inline-block;
+    width: 18px;
+    color: var(--color-teal-muted);
+  }
+
+  .summary-text {
+    max-width: 22rem;
+    margin: 0;
+    color: var(--color-teal-deep);
+    font-size: 14px;
+  }
+
+  .summary-note {
+    max-width: 22rem;
+    margin: 28px 0 0;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .scheduler {
+    min-width: 0;
+    padding: 30px 34px 32px;
+  }
+
+  .booking-card--live .scheduler {
+    padding: 0;
+  }
+
+  .embed {
+    position: relative;
+    min-height: 700px;
+  }
+
+  .embed :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .embed-loading {
+    margin: 0;
+    padding: 30px 34px;
+    font-size: 14px;
+  }
+
+  .fallback {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 6px;
+    height: 100%;
+    font-size: 15px;
+  }
+
+  .fallback-title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .fallback p {
+    max-width: 26rem;
+    margin: 0 0 16px;
+  }
+
+  .direct-link {
+    margin: 18px 0 0;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .direct-link a {
+    color: var(--color-teal-deep);
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 760px) {
+    .intro {
+      grid-template-columns: 1fr;
+      margin-bottom: 32px;
+    }
+
+    .intro .lede {
+      justify-self: start;
+    }
+
+    .booking-card {
+      grid-template-columns: 1fr;
+    }
+
+    .summary {
+      padding: 24px 22px 26px;
+      border-right: 0;
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    .scheduler {
+      padding: 24px 18px 26px;
+    }
+
+    .embed {
+      min-height: 720px;
+    }
+  }
+</style>
